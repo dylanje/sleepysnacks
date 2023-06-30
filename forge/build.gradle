@@ -1,0 +1,187 @@
+buildscript {
+    repositories {
+        maven {
+            url = "https://files.minecraftforge.net/maven"
+        }
+        maven {
+            url = "https://repo.spongepowered.org/repository/maven-public/"
+        }
+        maven {
+            url = "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.0+', changing: true
+        classpath 'com.github.johnrengelman:shadow:8.1.1'
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+
+repositories {
+    maven {
+        url = 'https://maven.blamejared.com'
+    }
+}
+
+base.archivesName = archives_base_name + "-" + mc_version + "-FORGE"
+
+configurations {
+    shade
+    compileOnly.extendsFrom shade
+    compileOnly.extendsFrom shadeSource
+}
+
+mixin {
+    add sourceSets.main, "sleepysnacks.refmap.json"
+    config "sleepysnacks.mixins.json"
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    "src/main/generated",
+                    rootProject.sourceSets.main.resources
+            ]
+        }
+    }
+}
+
+minecraft {
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    mappings channel: 'official', version: "${mc_version}"
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'legacyClassPath', '{minecraft_classpath}'
+            arg "-mixin.config=sleepysnacks.mixins.json"
+            // log for userdev env
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // logging level for console
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'sleepysnacks', '--all', '--output', file('src/generated/resources/'), '--existing', rootProject.file('src/main/resources/')
+            mods {
+                sleepysnacks {
+                    sources(sourceSets.main, rootProject.sourceSets.main)
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            // log for userdev env
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // logging level for console
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                sleepysnacks {
+                    sources(sourceSets.main, rootProject.sourceSets.main)
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+            property 'legacyClassPath', '{minecraft_classpath}'
+            // log for userdev env
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // logging level for console
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'sleepysnacks', '--all', '--output', file('src/generated/resources/'), '--existing', rootProject.file('src/main/resources/')
+            mods {
+                sleepysnacks {
+                    sources(sourceSets.main, rootProject.sourceSets.main)
+                }
+            }
+        }
+    }
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(sourceSets.main.resources.srcDirs) {
+        include('**/data/**')
+        include('**/dependents/**')
+        expand "dependent": "forge"
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+    implementation(rootProject)
+    shade(rootProject)
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+shadowJar {
+    archiveClassifier = ""
+    enabled = true
+    configurations = [project.configurations.shade]
+    relocate 'dependents/platform', 'data/forge'
+}
+
+artifacts {
+    archives shadowJar
+    shadow shadowJar
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title": "sleepysnacks",
+                "Specification-Vendor": "sleepydylon",
+                "Specification-Version": "1",
+                "Implementation-Title": "${archives_base_name}",
+                "Implementation-Version": "${mod_version}",
+                "Implementation-Vendor" :"sleepydylon",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs": "sleepysnacks.mixins.json"
+        ])
+    }
+}
+
+tasks.withType(JavaCompile) {
+    doLast {
+        copy {
+            from "${buildDir}/resources/main/dependents/platform"
+            include "**/**/*.json"
+            expand "dependent": "forge"
+            into "${buildDir}/resources/main/data/forge/"
+        }
+    }
+}
+
+tasks.build.dependsOn(tasks.shadowJar)
+
+reobf {
+    shadowJar {}
+}
+
+jar.finalizedBy('reobfJar')
+
+task sourceJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = "${archives_base_name}_" + artifactId
+            version = version + "-${mc_version}"
+            // add all the jars that should be included when publishing to maven
+            from (components.java)
+            artifact sourceJar
+        }
+    }
+
+    repositories {
+    }
+}

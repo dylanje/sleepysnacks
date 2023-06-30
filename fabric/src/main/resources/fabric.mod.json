@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "sleepysnacks",
+  "version": "${mod_version}",
+  "name": "SleepySnacks",
+  "description": "Food",
+  "authors": [
+    "sleepydylon"
+  ],
+  "contributors": [
+    "Thonk"
+  ],
+  "contact": {
+    "sources": "https://github.com/dylanje/sleepysnacks",
+    "issues": "https://github.com/dylanje/sleepysnacks/issues",
+    "homepage": ""
+  },
+  "license": "MIT",
+  "environment": "*",
+  "accessWidener": "sleepysnacks.accesswidener",
+  "entrypoints": {
+    "fabric-datagen": [
+      "com.dylanensor.sleepysnacks.datagen.SleepySnacksDataGeneratorEntry"
+    ],
+    "client": [
+      "com.dylanensor.sleepysnacks.client.SleepySnacksClient"
+    ],
+    "main": [
+      "com.dylanensor.sleepysnacks.SleepySnacks"
+    ]
+  },
+  "mixins": [
+    "SleepySnacks.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.21",
+    "fabric": ">=0.55.1",
+    "fabric-biome-api-v1": ">=3.0.0",
+    "minecraft": ">=1.20"
+  },
+  "suggests": {
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.dylanensor.sleepysnacks.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "sleepysnacks.refmap.json",
+  "mixins": [
+    "AgeInvokerMixin",
+    "LootPoolAccessor",
+    "LootPoolBuilderAccessor",
+    "LootTableAccessor"
+  ],
+  "minVersion": "0.8"
+}

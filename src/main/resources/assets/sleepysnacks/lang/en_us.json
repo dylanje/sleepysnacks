@@ -1,0 +1,10 @@
+{
+  "item.croptopia.arugula": "Arugula",
+
+  "itemGroup.sleepysnacks.sleepysnacks": "SleepySnacks",
+  "itemGroup.sleepysnacks": "SleepySnacks",
+
+  "info.sleepysnacks.seed": "This seed will drop in biomes\n categorized as:",
+
+  "tag.s.crops" : "Crops"
+}
