@@ -1,8 +1,14 @@
+package com.dylanensor.sleepysnacks;
+
 import com.dylanensor.sleepysnacks.FabricAdapter;
 import com.dylanensor.sleepysnacks.SleepySnacksMod;
+import com.dylanensor.sleepysnacks.config.IdentifierSerializer;
+import com.dylanensor.sleepysnacks.config.SleepySnacksConfig;
+import com.dylanensor.sleepysnacks.items.CropLootTableModifier;
 import com.dylanensor.sleepysnacks.register.Content;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySynchronization;
@@ -41,7 +47,6 @@ public class SleepySnacks implements ModInitializer {
 
         Content.registerItems((id, object) -> Registry.register(BuiltInRegistries.ITEM, id, object));
 
-        Composter.init();
 
         this.config = new SleepySnacksConfig(devEnvironment, "sleepysnacks.conf");
         config.addSerializer(ResourceLocation.class, IdentifierSerializer.INSTANCE);
@@ -49,7 +54,12 @@ public class SleepySnacks implements ModInitializer {
 
         CropLootTableModifier.init();
 
-        // ** left off here **
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+           SetupCommand.register(dispatcher, registryAccess);
+        });
     }
 
+    public static ResourceLocation createIdentifier(String name) {
+        return new ResourceLocation(MOD_ID, name);
+    }
 }

@@ -7,10 +7,8 @@
   "mixins": [
     "AxeMixin",
     "ChickenAccess",
-    "FarmerWorkTaskMixin",
     "ItemMixin",
     "LootTableBuilderAccessor",
-    "ParrotAccess",
     "StructurePoolsMixin",
     "datagen.IdentifierAccessor",
     "datagen.ObjectBuilderAccessor",

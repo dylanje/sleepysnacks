@@ -1,5 +1,6 @@
 package com.dylanensor.sleepysnacks.register.helpers;
 
+import com.dylanensor.sleepysnacks.SleepySnacksMod;
 import com.dylanensor.sleepysnacks.blocks.SleepySnacksCropBlock;
 import com.dylanensor.sleepysnacks.items.CropItem;
 import com.dylanensor.sleepysnacks.items.SeedItem;
@@ -21,6 +22,7 @@ import static com.dylanensor.sleepysnacks.SleepySnacksMod.*;
 import static com.dylanensor.sleepysnacks.util.FoodConstructor.createFood;
 
 public class FarmlandCrop implements ItemConvertibleWithPlural, BlockConvertible {
+
     private static final List<FarmlandCrop> FARMLAND_CROPS = new ArrayList<>();
 
     private final String name;
@@ -30,10 +32,10 @@ public class FarmlandCrop implements ItemConvertibleWithPlural, BlockConvertible
     private final Item cropItem;
     private final Block cropBlock;
     private final SeedItem seedItem;
-    private final TagKey<Biome> biomes;
+    private final TagKey<Biome> biomes; // todo implement
 
     public FarmlandCrop(String cropName, boolean isPlural, TagCategory category, FoodConstructor registry, TagKey<Biome> biomes) {
-        this(cropName, isPlural, category, registry, biomes);
+        this(cropName, cropName, isPlural, category, registry, biomes);
     }
 
     public FarmlandCrop(String cropName, String dropName, boolean isPlural, TagCategory category, FoodConstructor registry, TagKey<Biome> biomes) {
@@ -43,7 +45,6 @@ public class FarmlandCrop implements ItemConvertibleWithPlural, BlockConvertible
         this.plural = isPlural;
         this.tagCategory = category;
         this.biomes = biomes;
-
         if (registry == null) {
             this.cropItem = new CropItem(createGroup());
         } else {
@@ -52,7 +53,6 @@ public class FarmlandCrop implements ItemConvertibleWithPlural, BlockConvertible
         cropBlock = new SleepySnacksCropBlock(createCropSettings());
         seedItem = new SeedItem(cropBlock, createGroup(), biomes);
         FARMLAND_CROPS.add(this);
-
     }
 
     @Override
@@ -90,7 +90,7 @@ public class FarmlandCrop implements ItemConvertibleWithPlural, BlockConvertible
     public static void registerBlocks(RegisterFunction<Block> register) {
         for (FarmlandCrop farmlandCrop : FARMLAND_CROPS) {
             register.register(createIdentifier(farmlandCrop.name + "_crop"), farmlandCrop.asBlock());
-            cropBlocks.add(farmlandCrop.asBlock());
+            SleepySnacksMod.cropBlocks.add(farmlandCrop.asBlock());
         }
     }
 
@@ -98,9 +98,8 @@ public class FarmlandCrop implements ItemConvertibleWithPlural, BlockConvertible
         for (FarmlandCrop farmlandCrop : FARMLAND_CROPS) {
             register.register(createIdentifier(farmlandCrop.dropName), farmlandCrop.asItem());
             register.register(createIdentifier(farmlandCrop.name + "_seed"), farmlandCrop.seedItem);
-
-            cropItems.add(farmlandCrop.asItem());
-            seeds.add(farmlandCrop.seedItem);
+            SleepySnacksMod.cropItems.add(farmlandCrop.asItem());
+            SleepySnacksMod.seeds.add(farmlandCrop.seedItem);
         }
     }
 }

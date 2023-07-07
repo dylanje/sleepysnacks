@@ -29,13 +29,14 @@ public class SeedItem extends ItemNameBlockItem {
     }
 
     @Override
-    public InteractionResult useOne(UseOnContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         BlockPos hitPos = context.getClickedPos();
         Level world = context.getLevel();
         BlockState state = world.getBlockState(hitPos);
         if (state.getBlock() instanceof FarmBlock && context.getClickedFace() == Direction.UP) {
             return super.useOn(context);
         }
+        return InteractionResult.FAIL;
     }
     @Override
     public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {

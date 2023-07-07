@@ -24,14 +24,14 @@ displayName="Sleepy Snacks" #mandatory
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 #logoFile="examplemod.png" #optional
-credits="sleepydylon 2023" #optional
-authors="sleepydylon" #optional
+credits="Thonk, sleepydylon 2023" #optional
+authors="Thonk, sleepydylon" #optional
 # Display Test controls the display for your mod in the server connection screen
 #displayTest="MATCH_VERSION" # MATCH_VERSION is the default if nothing is specified (#optional)
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Eats Treats and Snacks
+Eats Treats and Snacks based on Croptopia mod
 '''
 
 [[dependencies.sleepysnacks]] #optional
